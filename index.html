@@ -44,7 +44,13 @@
         #month-year {
             font-size: 24px;
             font-weight: bold;
+            background-color: #965ea9;
+            padding: 5px 20px;
+            border-radius: 5px; 
+            margin-left: 15px;
+            color: #FFFFFF;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -86,85 +92,115 @@
             background-color: #FCE0E0;
         }
 
-    </style>
+        .header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 20px;
+      }
+
+      .logo {
+          height: 50px;
+          margin-right: 15px;
+      }
+
+      .name {
+        background-color: #33a8aa;
+        padding: 5px 10px;
+        border-radius: 5px; 
+        margin-left: 15px;
+        font-size: 30px;
+        font-weight: bold;
+        color: #FFFFFF;
+    }
+
+</style>
 </head>
 <body>
 
-<div class="container">
-    <div class="controls">
-        <button id="prev-month">Poprzedni</button>
-        <div id="month-year"></div>
-        <button id="next-month">Następny</button>
+    <div class="container">
+        <div class="header">
+            <img src="https://www.frakolandia.pl/images/frakolandia-stalowa-wola.png" alt="Logo" class="logo">
+            <span class="name">Jadzia</span>
+        </div>
+
+        <p>&nbsp;</p>
+
+        <div class="controls">
+            <button id="prev-month">Poprzedni</button>
+            <div id="month-year"></div>
+            <button id="next-month">Następny</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>DATA</th>
+                    <th>DZIEŃ</th>
+                    <th>MIEJSCE</th>
+                </tr>
+            </thead>
+            <tbody id="schedule-body">
+            </tbody>
+        </table>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>DATA</th>
-                <th>DZIEŃ</th>
-                <th>MIEJSCE</th>
-            </tr>
-        </thead>
-        <tbody id="schedule-body">
-            </tbody>
-    </table>
-</div>
+    <script>
 
-<script>
+
 // --- POCZĄTEK MIEJSCA NA TWOJE DANE JSON ---
 
-let scheduleData = [];
-let link_url = "https://docs.google.com/spreadsheets/d/14FLd4RTYxnk_pOAnfVk-faCIA-PmelVGgkucNrs-1aQ/gviz/tq?tqx=out:json&gid=1526655783&tq=select%20A%2C%20B%2C%20C%20where%20B%20%3D%20'Jadzia'";
+        let scheduleData = [];
+        let link_url = "https://docs.google.com/spreadsheets/d/14FLd4RTYxnk_pOAnfVk-faCIA-PmelVGgkucNrs-1aQ/gviz/tq?tqx=out:json&gid=1526655783&tq=select%20A%2C%20B%2C%20C%20where%20B%20%3D%20'Jadzia'";
 
-fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(link_url) + '&disableCache=true')
-  .then(res => res.json())
-  .then(data => {
-    const raw = data.contents;
-    const json = JSON.parse(raw.match(/setResponse\((.*)\);/s)[1]);
-    const cols = json.table.cols.map(col => col.label);
-    const rows = json.table.rows;
+        fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(link_url) + '&disableCache=true')
+        .then(res => res.json())
+        .then(data => {
+            const raw = data.contents;
+            const json = JSON.parse(raw.match(/setResponse\((.*)\);/s)[1]);
+            const cols = json.table.cols.map(col => col.label);
+            const rows = json.table.rows;
 
-    scheduleData = rows.map(row => {
-      let obj = {};
-      row.c.forEach((cell, i) => {
-        obj[cols[i]] = (cell.f) ? cell.f : cell.v;
-      });
-      return obj;
-    });
+            scheduleData = rows.map(row => {
+              let obj = {};
+              row.c.forEach((cell, i) => {
+                obj[cols[i]] = (cell.f) ? cell.f : cell.v;
+            });
+              return obj;
+          });
 
-    generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
-  });
+            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        });
 
 // --- KONIEC MIEJSCA NA TWOJE DANE JSON ---
 
 
 // --- LOGIKA SKRYPTU (NIE MUSISZ TEGO EDYTOWAĆ) ---
 
-const monthYearElement = document.getElementById('month-year');
-const scheduleBody = document.getElementById('schedule-body');
-const prevMonthButton = document.getElementById('prev-month');
-const nextMonthButton = document.getElementById('next-month');
+        const monthYearElement = document.getElementById('month-year');
+        const scheduleBody = document.getElementById('schedule-body');
+        const prevMonthButton = document.getElementById('prev-month');
+        const nextMonthButton = document.getElementById('next-month');
 
 // Pomocnicze tablice z polskimi nazwami
-const monthNames = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
-const dayNames = ["N", "Pn", "Wt", "Śr", "Czw", "Pt", "Sob"];
+        const monthNames = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
+        const dayNames = ["N", "Pn", "Wt", "Śr", "Czw", "Pt", "Sob"];
 
 // Przechowuje aktualnie wyświetlaną datę
-let currentDate = new Date();
+        let currentDate = new Date();
 
 // Główna funkcja generująca tabelę
-function generateCalendar(year, month) {
+        function generateCalendar(year, month) {
     // Czyści poprzednią zawartość tabeli
-    scheduleBody.innerHTML = '';
+            scheduleBody.innerHTML = '';
 
     // Ustawia nagłówek z nazwą miesiąca i rokiem
-    monthYearElement.textContent = `${monthNames[month]} ${year}`;
+            monthYearElement.textContent = `${monthNames[month]} ${year}`;
 
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const today = new Date();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
 
-    for (let i = 1; i <= daysInMonth; i++) {
-        const loopDate = new Date(year, month, i);
+            for (let i = 1; i <= daysInMonth; i++) {
+                const loopDate = new Date(year, month, i);
 
         const dayIndex = loopDate.getDay(); // 0 = Niedziela, 6 = Sobota
 
