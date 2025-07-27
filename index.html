@@ -117,7 +117,22 @@
     <div class="container">
         <div class="header">
             <img src="https://www.frakolandia.pl/images/frakolandia-stalowa-wola.png" alt="Logo" class="logo">
-            <span class="name">Jadzia</span>
+            <select id="name-select" class="name">
+                <option>Aga</option>
+                <option>Agu</option>
+                <option>Ania</option>
+                <option>Domi</option>
+                <option>Ewela</option>
+                <option>Gabi</option>
+                <option>Jadzia</option>
+                <option>Jędrek</option>
+                <option>Justyna</option>
+                <option>Karola</option>
+                <option>Kasia</option>
+                <option>Nati</option>
+                <option>Pati</option>
+                <option>Wiki</option>
+            </select>
         </div>
 
         <p>&nbsp;</p>
@@ -243,6 +258,7 @@
     }
 }
 
+
 // Obsługa przycisków nawigacyjnych
 prevMonthButton.addEventListener('click', () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
@@ -257,7 +273,34 @@ nextMonthButton.addEventListener('click', () => {
 // Pierwsze uruchomienie - generowanie kalendarza dla bieżącego miesiąca
 window.addEventListener('DOMContentLoaded', () => {
     generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    f_osoby();
 });
+
+
+function f_osoby() {
+    let link_url = "https://docs.google.com/spreadsheets/d/1Gq8rD_tlDOaT9O0LOG6K7xZj_zA7c_n4RdO9kUhWgd8/gviz/tq?tqx=out:json&gid=0&tq=select%20E%20where%20E%20is%20not%20null%20offset%201";
+
+    fetch(link_url)
+    .then(res => res.text())
+    .then(raw => {
+        const json = JSON.parse(raw.match(/setResponse\((.*)\);/s)[1]);
+        const rows = json.table.rows;
+
+        const select = document.getElementById("name-select");
+        select.innerHTML = ""; // czyści stare <option>
+
+        rows.forEach(row => {
+            const name = row.c[0].v; // kolumna E
+            if (name) {
+                const option = document.createElement("option");
+                option.textContent = name;
+                option.value = name;
+                select.appendChild(option);
+            }
+        });
+    });
+}
+
 
 </script>
 
