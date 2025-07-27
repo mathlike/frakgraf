@@ -149,12 +149,12 @@
         let scheduleData = [];
         let link_url = "https://docs.google.com/spreadsheets/d/1Gq8rD_tlDOaT9O0LOG6K7xZj_zA7c_n4RdO9kUhWgd8/gviz/tq?tqx=out:json&gid=0&tq=select%20A%2C%20B%2C%20C%20where%20B%20%3D%20'Jadzia'";
 
-        fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(link_url) + '&disableCache=true')
+        fetch(link_url)
         .then(res => res.json())
         .then(data => {
             const raw = data.contents;
             const json = JSON.parse(raw.match(/setResponse\((.*)\);/s)[1]);
-            const cols = json.table.cols.map(col => col.label);
+            const cols = ["DATA", "IMIE", "MIEJSCE"];
             const rows = json.table.rows;
 
             scheduleData = rows.map(row => {
