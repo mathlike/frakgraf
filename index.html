@@ -270,6 +270,14 @@
                 row.className = 'highlight';
             }
             scheduleBody.appendChild(row);
+          
+            const todayRow = document.querySelector('.highlight');
+            if (todayRow) {
+              todayRow.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              });
+            }
         }
     }
 
