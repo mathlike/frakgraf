@@ -173,7 +173,7 @@
 
     async function pobierzIUtworzOpcjeSelect() {
         // Pokaż komunikat ładowania, ukryj select
-        personLoaderElement.innerHTML = '<p style="color: red; font-size: 20px; margin-top: 15px; margin-bottom: 15px;">Trwa ładowanie listy osób...</p>';
+        personLoaderElement.innerHTML = '<p style="color: red; font-size: 20px; margin-top: 15px; margin-bottom: 15px;">Trwa pobieranie danych...</p>';
         personSelectElement.style.display = 'none';
 
         const query = "select E where E is not null offset 1";
