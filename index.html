@@ -354,6 +354,12 @@
 
   </script>
 
+  <script>
+  const headerBottom = document.querySelector('.header-bottom.controls');
+  const headerHeight = headerBottom.offsetHeight;
+  document.querySelector('thead').style.top = `${headerHeight + 89}px`;
+</script>
+
 </body>
 
 </html>
