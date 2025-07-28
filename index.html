@@ -117,8 +117,7 @@
     <div class="container">
         <div class="header">
             <img src="https://www.frakolandia.pl/images/frakolandia-stalowa-wola.png" alt="Logo" class="logo">
-            <select id="name-select" class="name">
-            </select>
+            <span class="name">Jadzia</span>
         </div>
 
         <p>&nbsp;</p>
@@ -143,11 +142,32 @@
     </div>
 
     <script>
-    const s_option = document.getElementById("name-select");
-        s_option.addEventListener("change", function() {
-    f_dane();
-});
 
+
+// --- POCZĄTEK MIEJSCA NA TWOJE DANE JSON ---
+
+        let scheduleData = [];
+        let link_url = "https://docs.google.com/spreadsheets/d/1Gq8rD_tlDOaT9O0LOG6K7xZj_zA7c_n4RdO9kUhWgd8/gviz/tq?tqx=out:json&gid=0&tq=select%20A%2C%20B%2C%20C%20where%20B%20%3D%20'Jadzia'";
+
+        fetch(link_url)
+        .then(res => res.text())
+        .then(raw => {
+            const json = JSON.parse(raw.match(/setResponse\((.*)\);/s)[1]);
+            const cols = ["DATA", "IMIE", "MIEJSCE"];
+            const rows = json.table.rows;
+
+            scheduleData = rows.map(row => {
+              let obj = {};
+              row.c.forEach((cell, i) => {
+                obj[cols[i]] = (cell.f) ? cell.f : cell.v;
+            });
+              return obj;
+          });
+
+            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        });
+
+// --- KONIEC MIEJSCA NA TWOJE DANE JSON ---
 
 
 // --- LOGIKA SKRYPTU (NIE MUSISZ TEGO EDYTOWAĆ) ---
@@ -223,7 +243,6 @@
     }
 }
 
-
 // Obsługa przycisków nawigacyjnych
 prevMonthButton.addEventListener('click', () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
@@ -238,65 +257,7 @@ nextMonthButton.addEventListener('click', () => {
 // Pierwsze uruchomienie - generowanie kalendarza dla bieżącego miesiąca
 window.addEventListener('DOMContentLoaded', () => {
     generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
-    f_osoby();
 });
-
-
-function f_osoby() {
-    let link_url = "https://docs.google.com/spreadsheets/d/1Gq8rD_tlDOaT9O0LOG6K7xZj_zA7c_n4RdO9kUhWgd8/gviz/tq?tqx=out:json&gid=0&tq=select%20E%20where%20E%20is%20not%20null%20offset%201";
-
-    fetch(link_url)
-    .then(res => res.text())
-    .then(raw => {
-        const json = JSON.parse(raw.match(/setResponse\((.*)\);/s)[1]);
-        const rows = json.table.rows;
-
-        const select = document.getElementById("name-select");
-        select.innerHTML = ""; // czyści stare <option>
-
-        rows.forEach(row => {
-            const name = row.c[0].v; // kolumna E
-            if (name) {
-                const option = document.createElement("option");
-                option.textContent = name;
-                option.value = name;
-                select.appendChild(option);
-            }
-        });
-    });
-}
-
-
-function f_dane() {
-
-// --- POCZĄTEK MIEJSCA NA TWOJE DANE JSON ---
-        
-        let osoba = s_option.options[s_option.selectedIndex].text;
-        let scheduleData = [];
-        let link_url = "https://docs.google.com/spreadsheets/d/1Gq8rD_tlDOaT9O0LOG6K7xZj_zA7c_n4RdO9kUhWgd8/gviz/tq?tqx=out:json&gid=0&tq=select%20A%2C%20B%2C%20C%20where%20B%20%3D%20'" + osoba + "'";
-
-        fetch(link_url)
-        .then(res => res.text())
-        .then(raw => {
-            const json = JSON.parse(raw.match(/setResponse\((.*)\);/s)[1]);
-            const cols = ["DATA", "IMIE", "MIEJSCE"];
-            const rows = json.table.rows;
-
-            scheduleData = rows.map(row => {
-              let obj = {};
-              row.c.forEach((cell, i) => {
-                obj[cols[i]] = (cell.f) ? cell.f : cell.v;
-            });
-              return obj;
-          });
-
-            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
-        });
-
-// --- KONIEC MIEJSCA NA TWOJE DANE JSON ---
-
-}
-
 
 </script>
 
